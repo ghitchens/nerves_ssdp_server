@@ -18,3 +18,9 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
           [applications: [:nerves_ssdp_server]]
         end
 
+
+## References
+
+http://www.w3.org/TR/discovery-api/#simple-service-discovery-protocol-ssdp
+http://www.upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.0-20080424.pdf
+

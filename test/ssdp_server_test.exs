@@ -1,19 +1,22 @@
 defmodule Nerves.SSDPServerTest do
   alias Nerves.SSDPServer
-  use ExUnit.Case
+  use ExUnit.Case, seed: 0
 
   doctest SSDPServer
 
-  test "publishing doesn't crash" do
-    {:ok, _pid} = SSDPServer.publish "test:my_usn", url: "http://here/"
-    :timer.sleep 2000
-  end
+  @sample_fields [
+    location: "http://there/",
+    st: "nerves-project-org:test-service:1",
+    server: "SSDPServerTest",
+    "cache-control": "max-age=1800"
+  ]
 
-  test "publishing and unpublishing works properly" do
-    usn = "test:my_usn_that_will_be_unpublished"
-    {:ok, _pid} = SSDPServer.publish usn, url: "http://there/"
-    :timer.sleep 2000
-    :ok = SSDPServer.unpublish usn
+  test "ssdp seems to work" do
+  {:ok, _pid} = SSDPServer.publish "uuid:test:my_usn", @sample_fields
+  usn = "test:my_usn_that_will_be_unpublished"
+  {:ok, _pid} = SSDPServer.publish usn, @sample_fields
+  :timer.sleep 1000
+  :ok = SSDPServer.unpublish usn
+  # {:ok, _pid} = SSDPServer.publish usn, @sample_fields
   end
-
 end

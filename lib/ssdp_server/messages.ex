@@ -1,16 +1,10 @@
 defmodule Nerves.SSDPServer.Messages do
 
-  require Logger
-
   @moduledoc false
-
   @notify_header "NOTIFY * HTTP/1.1"
   @response_header "HTTP/1.1 200 OK"
 
-  # public
-
   def alive(fields) do
-    Logger.debug "alive: #{inspect fields}"
     fields
     |> add_nts_field(:alive)
     |> transform_st_into_nt
@@ -24,7 +18,7 @@ defmodule Nerves.SSDPServer.Messages do
     |> format_response_with_header @notify_header
   end
 
-  def reponse(fields) do
+  def response(fields) do
     fields
     |> format_response_with_header @response_header
   end
@@ -37,7 +31,6 @@ defmodule Nerves.SSDPServer.Messages do
   end
 
   defp transform_st_into_nt(fields) do
-    Logger.debug "transform: #{inspect fields}"
     {st, new_fields} = Dict.pop(fields, :st)
     Dict.merge(new_fields, [nt: st])
   end
@@ -59,5 +52,4 @@ defmodule Nerves.SSDPServer.Messages do
     |> :erlang.atom_to_binary(:utf8)
     |> String.upcase
   end
-
 end
