@@ -1,5 +1,6 @@
 defmodule Nerves.SSDPServer.Server do
 
+  alias Nerves.SSDPServer.Messages
   use GenServer
   require Logger
 
@@ -31,7 +32,9 @@ defmodule Nerves.SSDPServer.Server do
 
   @spec notify(state) :: state
   defp notify(state) do
-    Logger.debug "notify: #{inspect state.usn}"
+    state.fields
+    |> Messages.alive
+    |> IO.write
     %{state | notify_count: state.notify_count + 1}
   end
 
@@ -57,11 +60,4 @@ defmodule Nerves.SSDPServer.Server do
   # transform state into a reply for use with common erlang and genserver responses
   defp tuple_reply(state, atom) when is_atom(atom), do: {atom, state}
 
-  defp build_message(state, :alive) do
-    state
-    |> transform_st_to_nt
-    |> 
-    build_message state, "NOTIFY * HTTP/1.1"
-    
-  end
 end
