@@ -1,14 +1,13 @@
 defmodule Nerves.SSDPServer.Server do
 
-  # NOT YET IMPLEMENTED - 13-NOV-2015
-
   use GenServer
   require Logger
 
   @type state :: map
 
   @moduledoc false
-  @initial_state %{service_type: nil, notify_count: 0}
+  @initial_state %{service_type: nil, usn: nil, notify_count: 0, fields: %{}}
+  @default_service_type "nerves-project-org:generic-service:1"
 
   def start_link(args) do
     GenServer.start_link(__MODULE__, args, [])
@@ -17,10 +16,17 @@ defmodule Nerves.SSDPServer.Server do
   def init(args) do
     Logger.debug inspect args
     @initial_state
-    |> Dict.merge(args)
+    |> Dict.merge(state_keys_from_args(args))
     |> notify
     |> reschedule_notify
-    |> reply(:ok)
+    |> tuple_reply(:ok)
+  end
+
+  @spec state_keys_from_args(Dict.t) :: Dict.t
+  defp state_keys_from_args(args) do
+    usn = Dict.get args, :usn
+    service_type = Dict.get args, :service_type, @default_service_type
+    %{service_type: service_type, usn: usn, fields: args}
   end
 
   @spec notify(state) :: state
@@ -41,13 +47,21 @@ defmodule Nerves.SSDPServer.Server do
     state
     |> notify
     |> reschedule_notify
-    |> reply(:noreply)
+    |> tuple_reply(:noreply)
   end
 
   # re-notify every 2 seconds for the first 5 annoucements, then 30 secs
   defp notify_interval(count) when count >= 5, do: 30000
   defp notify_interval(_count), do: 2000
 
-  defp reply(state, atom) when is_atom(atom), do: {atom, state}
+  # transform state into a reply for use with common erlang and genserver responses
+  defp tuple_reply(state, atom) when is_atom(atom), do: {atom, state}
 
+  defp build_message(state, :alive) do
+    state
+    |> transform_st_to_nt
+    |> 
+    build_message state, "NOTIFY * HTTP/1.1"
+    
+  end
 end
