@@ -14,7 +14,8 @@ defmodule Nerves.SSDPServer.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger]]
+    [applications: [:logger],
+     mod: {Nerves.SSDPServer, []}]
   end
 
   # Dependencies can be Hex packages:

@@ -6,11 +6,14 @@ defmodule Nerves.SSDPServerTest do
 
   test "publishing doesn't crash" do
     {:ok, _pid} = SSDPServer.publish "test:my_usn", url: "http://here/"
+    :timer.sleep 2000
   end
 
   test "publishing and unpublishing works properly" do
     usn = "test:my_usn_that_will_be_unpublished"
     {:ok, _pid} = SSDPServer.publish usn, url: "http://there/"
+    :timer.sleep 2000
     :ok = SSDPServer.unpublish usn
   end
+
 end
