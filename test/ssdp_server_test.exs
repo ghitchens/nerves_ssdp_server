@@ -11,7 +11,7 @@ defmodule Nerves.SSDPServerTest do
     "cache-control": "max-age=1800"
   ]
 
-  test "ssdp seems to work" do
+  test "ssdp seems to work at all" do
   {:ok, _pid} = SSDPServer.publish "uuid:test:my_usn", @sample_fields
   usn = "test:my_usn_that_will_be_unpublished"
   {:ok, _pid} = SSDPServer.publish usn, @sample_fields
