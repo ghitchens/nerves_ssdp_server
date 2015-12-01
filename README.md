@@ -46,7 +46,7 @@ alias Nerves.SSDPServer
 SSDPServer.publish "uuid:my-service-name", @ssdp_fields
 ```
 
-You can call `publish` to publish multiple services, but you can only publish each USN once, as per the SSDP spec.
+You can call `publish` to publish multiple services, each with a unique USN, but you can only publish each USN once, as per the SSDP spec.
 
 ## References
 

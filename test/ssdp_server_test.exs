@@ -24,7 +24,7 @@ defmodule Nerves.SSDPServerTest do
     "cache-control": "max-age=5"
   ]
 
-  test "ssdp publishing, un-publishing, and republishing works" do
+  test "ssdp publishing, un-publishing works" do
     # test publishing and behavior
     publish_and_test(@test_usn_1, @test_fields_1)
     publish_and_test(@test_usn_2, @test_fields_2)
