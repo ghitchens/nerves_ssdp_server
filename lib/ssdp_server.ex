@@ -49,12 +49,9 @@ defmodule Nerves.SSDPServer do
   """
   @spec publish(usn, st, fields) :: {:ok, usn} | {:error, reason}
   def publish(usn, st, fields \\ []) do
-    server_spec = worker(Server, [(st |> to_string), (usn |> to_string),
-                                  fields], id: usn, restart: :transient)
-    case Supervisor.start_child(@sup, server_spec) do
-      {:ok, _} -> {:ok, usn}
-      {:error, reason} -> {:error, reason}
-    end
+    Supervisor.start_child(@sup, (
+          worker(Server, [(st |> to_string), (usn |> to_string), fields],
+                 id: usn, restart: :transient)))
   end
 
   @doc """
