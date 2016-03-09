@@ -6,19 +6,20 @@ defmodule Nerves.SSDPServer do
 
   This does *not* use the full UPNP specification, but uses the
   multicast SSDP protocol in order to provide LAN presence annoucment
-  and device discovery using a well known service type.
-
-  It is intended to be used with Nerves.SSDPClient as part of Discovery
-  of Nerves Cells.
+  and device discovery.
 
   ```elixir
-  SSDPServer.publish(options)
-  ```
+  SSDPServer.publish(usn, st, fields)
 
   Returns the same returns{:ok, pid}, wher `pid` is the pid of
   the ssdp worker.
 
-  - service_type :: SSDP Service Type (See overview of SSDP)
+  - usn uniquely identifies the service, and must be unique on the network.
+  attempts to publish two services with the same usn on the same node will
+  result in an error.
+
+  - st (service_type) :: SSDP Service Type - a string that identifies the type of
+  service.
 
   """
 
