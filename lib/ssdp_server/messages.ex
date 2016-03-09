@@ -33,7 +33,7 @@ defmodule Nerves.SSDPServer.Messages do
   end
 
   defp transform_field_into_response_line({k, v}) do
-    formatted_key(k) <> ": #{v}\r\n"
+    formatted_key(k) <> ": " <> formatted_value(v) <> "\r\n"
   end
 
   defp formatted_key(key) do
@@ -41,4 +41,8 @@ defmodule Nerves.SSDPServer.Messages do
     |> :erlang.atom_to_binary(:utf8)
     |> String.upcase
   end
+
+  defp formatted_value(v) when is_function(v), do: v.()
+  defp formatted_value(v), do: to_string(v)
+
 end
