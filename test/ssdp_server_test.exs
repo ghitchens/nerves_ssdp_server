@@ -8,31 +8,31 @@ defmodule Nerves.SSDPServerTest do
   alias Nerves.SSDPClient
 
   @test_usn_1 "uid:test:my_usn_1"
+  @test_st_1 "nerves-project-org:test-service:1"
   @test_usn_2 "uid:test:my_usn_2"
+  @test_st_2 "test-nerves-project-org:another-test-service:1"
 
   @test_fields_1 [
     location: "http://there/",
-    st: "nerves-project-org:test-service:1",
     server: "SSDPServerTest",
     "cache-control": "max-age=1800"
   ]
 
   @test_fields_2 [
     location: "http://there/",
-    st: "test-nerves-project-org:another-test-service:1",
     server: "SSDPServerTest2",
     "cache-control": "max-age=5"
   ]
 
   test "ssdp publishing, un-publishing works" do
     # test publishing and behavior
-    publish_and_test(@test_usn_1, @test_fields_1)
-    publish_and_test(@test_usn_2, @test_fields_2)
+    publish_and_test(@test_usn_1, @test_st_1, @test_fields_1)
+    publish_and_test(@test_usn_2, @test_st_2, @test_fields_2)
     unpublish_and_test @test_usn_1
   end
 
-  defp publish_and_test(usn, fields) do
-    {:ok, _pid} = SSDPServer.publish usn, fields
+  defp publish_and_test(usn, st, fields) do
+    {:ok, _pid} = SSDPServer.publish usn, st, fields
     responses = SSDPClient.discover
     response = responses[usn]
     assert is_map(response)

@@ -2,15 +2,13 @@ defmodule Nerves.SSDPServer.Server do
 
   alias Nerves.SSDPServer.Messages
   use GenServer
-  require Logger
 
   @type state :: map
 
   @moduledoc false
-  @default_service_type "nerves-project-org:generic-service:1"
 
   @initial_state %{
-    service_type: nil,
+    st: nil,
     recv_socket: nil,
     xmit_socket: nil,
     usn: nil,
@@ -18,15 +16,15 @@ defmodule Nerves.SSDPServer.Server do
     fields: %{}
   }
 
-  def start_link(args) do
-    GenServer.start_link(__MODULE__, args, [])
+  def start_link(st, usn, fields) do
+    GenServer.start_link(__MODULE__, [st, usn, fields], [])
   end
 
   # public genserver handlers
 
-  def init(args) do
+  def init([st, usn, fields]) do
     @initial_state
-    |> Dict.merge(state_keys_from_args(args))
+    |> Dict.merge(%{st: st, usn: usn, fields: fields})
     |> open_ssdp_sockets!
     |> notify!
     |> reschedule_notify!
@@ -66,7 +64,7 @@ defmodule Nerves.SSDPServer.Server do
   defp handle_msearch(state, ip, port, packet) do
     headers = packet |> parse_httpu_headers
     search_target = headers[:st] || @default_search_target
-    if m_search_matches?(search_target, state.service_type) do
+    if m_search_matches?(search_target, state.st) do
       headers
       |> response_time
       |> :erlang.send_after(Kernel.self, {:respond_timer, ip, port})
@@ -87,14 +85,15 @@ defmodule Nerves.SSDPServer.Server do
   end
 
   defp respond!(state, ip, port) do
-    message = Messages.response(state.fields)
+    message = Messages.response(state.usn, state.st, state.fields)
     :ok = :gen_udp.send(state.xmit_socket, ip, port, message)
     state
   end
 
   # search match definitions
 
-  def m_search_matches?(target, service_type), do: true
+  def m_search_matches?("ssdp:all", _st), do: true
+  def m_search_matches?(target, st), do:  String.equivalent?(target, st)
 
   # ssdp notification (private)
 
@@ -104,8 +103,7 @@ defmodule Nerves.SSDPServer.Server do
 
   @spec notify!(state) :: state
   defp notify!(state) do
-    state.fields
-    |> Messages.alive
+    Messages.alive(state.usn, state.st, state.fields)
     |> send_multicast_ssdp_message!(state.xmit_socket)
     %{state | notify_count: state.notify_count + 1}
   end
@@ -161,15 +159,6 @@ defmodule Nerves.SSDPServer.Server do
 
   defp send_multicast_ssdp_message!(message, socket) do
     :ok = :gen_udp.send(socket, @mcast_group, @mcast_port, message)
-  end
-
-  # initialization helpers (private)
-
-  @spec state_keys_from_args(Dict.t) :: Dict.t
-  defp state_keys_from_args(args) do
-    usn = Dict.get args, :usn
-    service_type = Dict.get args, :service_type, @default_service_type
-    %{service_type: service_type, usn: usn, fields: args}
   end
 
   # transform state into a reply for use with common erlang and genserver responses

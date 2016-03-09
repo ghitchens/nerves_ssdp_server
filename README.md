@@ -27,7 +27,7 @@ In SSDP, every service needs to define a USN (unique service name), and a ST (se
 ```elixir
 alias Nerves.SSDPServer
 
-SSDPServer.publish "uuid:my_unique_service_id", st: "my-service-type"
+SSDPServer.publish "my_unique_service_name", "my-service-type"
 ```
 ### Publishing custom fields
 
@@ -38,15 +38,18 @@ alias Nerves.SSDPServer
 
 @ssdp_fields [
     location: "http://localhost:3000/myservice.json",
-    st: "my-project-org:my-service:1",
     server: "MyServerName",
     "cache-control": "max-age=1800"
 ]
 
-SSDPServer.publish "uuid:my-service-name", @ssdp_fields
+SSDPServer.publish "my-service-name", "my-service-type", @ssdp_fields
 ```
 
 You can call `publish` to publish multiple services, each with a unique USN, but you can only publish each USN once, as per the SSDP spec.
+
+## The nerves-project-org:service:cell:1 service type
+
+- LOCATION if present, specifies a URL to grab a cell description
 
 ## References
 

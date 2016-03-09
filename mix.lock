@@ -1,0 +1,1 @@
+%{"nerves_ssdp_client": {:git, "https://github.com/nerves-project/nerves_ssdp_client.git", "36f9926d51565e97f7fb08fea68f25bd8b380528", []}}
