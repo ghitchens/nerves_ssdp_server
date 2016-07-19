@@ -32,7 +32,7 @@ defmodule Nerves.SSDPServerTest do
   end
 
   defp publish_and_test(usn, st, fields) do
-    {:ok, _pid} = SSDPServer.publish usn, st, fields
+    {:ok, ^usn} = SSDPServer.publish usn, st, fields
     responses = SSDPClient.discover
     response = responses[usn]
     assert is_map(response)
