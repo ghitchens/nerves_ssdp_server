@@ -31,7 +31,7 @@ SSDPServer.publish "my_unique_service_name", "my-service-type"
 ```
 ### Publishing custom fields
 
-Other parameters you might specify for the second paramter do `publish` are included as fields of the published service.  For instance, you can do..
+Other parameters you might specify for the second parameter to `publish` are included as fields of the published service.  For instance, you can do..
 
 ```elixir
 alias Nerves.SSDPServer
