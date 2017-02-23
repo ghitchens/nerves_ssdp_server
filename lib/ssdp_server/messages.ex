@@ -6,19 +6,19 @@ defmodule Nerves.SSDPServer.Messages do
 
   def alive(usn, st, fields) do
     fields
-    |> Dict.merge(nt: st, usn: usn, nts: "ssdp:alive")
+    |> Keyword.merge(nt: st, usn: usn, nts: "ssdp:alive")
     |> format_response_with_header(@notify_header)
   end
 
   def byebye(usn, st, fields) do
     fields
-    |> Dict.merge(nt: st, usn: usn, nts: "ssdp:byebye")
+    |> Keyword.merge(nt: st, usn: usn, nts: "ssdp:byebye")
     |> format_response_with_header(@notify_header)
   end
 
   def response(usn, st, fields) do
     fields
-    |> Dict.merge(st: st, usn: usn)
+    |> Keyword.merge(st: st, usn: usn)
     |> format_response_with_header(@response_header)
   end
 

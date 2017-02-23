@@ -11,7 +11,7 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
   1. Add nerves_ssdp_server to your list of dependencies in `mix.exs`:
 
         def deps do
-          [{:nerves_ssdp_server, "~> 0.0.1"}]
+          [{:nerves_ssdp_server, "~> 0.2.2"}]
         end
 
   2. Ensure nerves_ssdp_server is started before your application:
