@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.2 (2017-Feb-23)
+
+* Support Elixir ~> 1.4
+* Require Keyword List configuration
+
 ## 0.2.1 (2016-Jul-19)
 
 * Cleaned up documentation

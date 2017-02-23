@@ -26,8 +26,6 @@ defmodule Nerves.SSDPServer do
 
   @sup Nerves.SSDPServer.Supervisor
 
-  @default_st "urn:nerves-project-org:service:cell:1"
-
   @doc false
   def start(_type, _args) do
     Supervisor.start_link [], strategy: :one_for_one, name: @sup
@@ -44,7 +42,7 @@ defmodule Nerves.SSDPServer do
   - `st` (service type) :: SSDP Service Type - a string that identifies the
     type of service.
 
-  - `fields` - Dict consiting of fields ot be added to the SSDP replies.
+  - `fields` - Keyword list consiting of fields ot be added to the SSDP replies.
 
   ## Examples
 
@@ -65,7 +63,7 @@ defmodule Nerves.SSDPServer do
 
       Nerves.SSDPServer.publish "my-service-name", "my-service-type", @ssdp_fields
   """
-  @spec publish(usn, st, Dict.t) :: {:ok, usn} | {:error, atom}
+  @spec publish(usn, st, Keyword.t) :: {:ok, usn} | {:error, atom}
   def publish(usn, st, fields \\ []) do
     ssdp_worker = worker(Server, [
       (st |> to_string), (usn |> to_string), fields],

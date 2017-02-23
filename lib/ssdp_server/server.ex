@@ -13,7 +13,7 @@ defmodule Nerves.SSDPServer.Server do
     xmit_socket: nil,
     usn: nil,
     notify_count: 0,
-    fields: %{}
+    fields: []
   }
 
   def start_link(st, usn, fields) do
@@ -24,7 +24,7 @@ defmodule Nerves.SSDPServer.Server do
 
   def init([st, usn, fields]) do
     @initial_state
-    |> Dict.merge(%{st: st, usn: usn, fields: fields})
+    |> Map.merge(%{st: st, usn: usn, fields: fields})
     |> open_ssdp_sockets!
     |> notify!
     |> reschedule_notify!
@@ -73,7 +73,7 @@ defmodule Nerves.SSDPServer.Server do
   end
 
   @default_mx 3000
-  @spec response_time(Dict.t) :: integer
+  @spec response_time(Keyword.t) :: integer
   # return random time in milliseconds (0-MX)
   defp response_time(headers) do
     if (headers[:mx]) do
@@ -154,7 +154,7 @@ defmodule Nerves.SSDPServer.Server do
   ]
 
   defp multicast_if(_state) do
-    {0,0,0,0} # TODO real implementation needed, see ssdp_os_info.erl
+    {0,0,0,0}
   end
 
   defp send_multicast_ssdp_message!(message, socket) do
@@ -172,8 +172,7 @@ defmodule Nerves.SSDPServer.Server do
        _ -> nil
      end
    end
-   resp = Enum.reject mapped_params, &(&1 == nil)
-   Dict.merge(%{}, resp)
+   Enum.reject mapped_params, &(&1 == nil)
  end
 
 end
