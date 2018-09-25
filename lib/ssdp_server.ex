@@ -80,7 +80,8 @@ defmodule Nerves.SSDPServer do
   """
   @spec unpublish(usn) :: :ok | {:error, atom}
   def unpublish(usn) do
-    Supervisor.terminate_child @sup, usn
+    Supervisor.terminate_child(@sup, usn)
+    Supervisor.delete_child(@sup, usn)
   end
 
 end
