@@ -177,7 +177,7 @@ defmodule Nerves.SSDPServer.Server do
     mapped_params =
       Enum.map(raw_params, fn x ->
         case String.split(x, ":", parts: 2) do
-          [k, v] -> {String.to_atom(String.downcase(k)), String.strip(v)}
+          [k, v] -> {String.to_atom(String.downcase(k)), String.trim(v)}
           _ -> nil
         end
       end)
