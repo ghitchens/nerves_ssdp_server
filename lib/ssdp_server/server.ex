@@ -87,7 +87,7 @@ defmodule Nerves.SSDPServer.Server do
 
   defp respond!(state, ip, port) do
     message = Messages.response(state.usn, state.st, state.fields)
-    :ok = :gen_udp.send(state.xmit_socket, ip, port, message)
+    :gen_udp.send(state.xmit_socket, ip, port, message)
     state
   end
 
@@ -109,8 +109,10 @@ defmodule Nerves.SSDPServer.Server do
   defp notify!(state) do
     Messages.alive(state.usn, state.st, state.fields)
     |> send_multicast_ssdp_message!(state.xmit_socket)
-
-    %{state | notify_count: state.notify_count + 1}
+    |> case do
+      :ok -> %{state | notify_count: state.notify_count + 1}
+      _ -> state
+    end
   end
 
   @spec reschedule_notify!(state) :: state
@@ -165,7 +167,7 @@ defmodule Nerves.SSDPServer.Server do
   end
 
   defp send_multicast_ssdp_message!(message, socket) do
-    :ok = :gen_udp.send(socket, @mcast_group, @mcast_port, message)
+    :gen_udp.send(socket, @mcast_group, @mcast_port, message)
   end
 
   # transform state into a reply for use with common erlang and genserver responses
