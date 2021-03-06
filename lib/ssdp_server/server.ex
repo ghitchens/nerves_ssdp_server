@@ -94,6 +94,7 @@ defmodule Nerves.SSDPServer.Server do
   # search match definitions
 
   def m_search_matches?("ssdp:all", _st), do: true
+  def m_search_matches?("upnp:rootdevice", _st), do: true
   def m_search_matches?(target, st), do: String.equivalent?(target, st)
 
   # ssdp notification (private)
