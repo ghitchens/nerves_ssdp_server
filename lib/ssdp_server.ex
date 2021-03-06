@@ -1,5 +1,4 @@
 defmodule Nerves.SSDPServer do
-
   @moduledoc """
   Implements a simple subset of the [Simple Service Discovery Protocol](https://en.wikipedia.org/wiki/Simple_Service_Discovery_Protocol).
 
@@ -11,13 +10,13 @@ defmodule Nerves.SSDPServer do
   @typedoc """
   Unique Service Identifier -- Uniquely identifies the service, and must be unique on the local network.
   """
-  @type usn :: String.t
+  @type usn :: String.t()
 
   @typedoc """
   Service Type -- a string that identifies the type of SSDP service.
   """
 
-  @type st :: String.t
+  @type st :: String.t()
   use Application
 
   alias Nerves.SSDPServer
@@ -28,7 +27,7 @@ defmodule Nerves.SSDPServer do
 
   @doc false
   def start(_type, _args) do
-    Supervisor.start_link [], strategy: :one_for_one, name: @sup
+    Supervisor.start_link([], strategy: :one_for_one, name: @sup)
   end
 
   @doc """
@@ -63,11 +62,20 @@ defmodule Nerves.SSDPServer do
 
       Nerves.SSDPServer.publish "my-service-name", "my-service-type", @ssdp_fields
   """
-  @spec publish(usn, st, Keyword.t) :: {:ok, usn} | {:error, atom}
+  @spec publish(usn, st, Keyword.t()) :: {:ok, usn} | {:error, atom}
   def publish(usn, st, fields \\ []) do
-    ssdp_worker = worker(Server, [
-      (st |> to_string), (usn |> to_string), fields],
-      id: usn, restart: :transient)
+    args = [
+      st |> to_string,
+      usn |> to_string,
+      fields
+    ]
+
+    ssdp_worker = %{
+      id: Server,
+      start: {Server, :start_link, args},
+      restart: :transient
+    }
+
     Supervisor.start_child(@sup, ssdp_worker)
     |> case do
       {:ok, _pid} -> {:ok, usn}
@@ -83,5 +91,4 @@ defmodule Nerves.SSDPServer do
     Supervisor.terminate_child(@sup, usn)
     Supervisor.delete_child(@sup, usn)
   end
-
 end
